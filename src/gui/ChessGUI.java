@@ -73,7 +73,7 @@ public class ChessGUI {
 	}
 	
 	public void initImages(){
-		File imageDirectory = new File("images");
+		File imageDirectory = new File("Images");
 		File[] files = imageDirectory.listFiles();
 		for(File f: files){
 			BufferedImage img = null;

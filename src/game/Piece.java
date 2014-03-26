@@ -1,31 +1,37 @@
 package game;
 
-public class Piece {
+import java.util.ArrayList;
+
+public abstract class Piece {
 	
-	public int type, color;
+	public int color, y, x;
 	public final static int BLACK = 0;
 	public final static int WHITE = 1;
-	public final static int EMPTY = 0;
-	public final static int PAWN = 1;
-	public final static int ROOK = 2;
-	public final static int KNIGHT = 3;
-	public final static int BISHOP = 4;
-	public final static int QUEEN = 5;
-	public final static int KING = 6;
 	
 	
-	public Piece(int type, int color) {
-		this.type = type;
+	public Piece(int color, int y, int x) {
 		this.color = color;
+		this.y = y;
+		this.x = x;
 	}
 
-	public Piece(int type) {
-		this.type = type;
+	public Piece(int y, int x) {
 		this.color = -1;
+		this.y = y;
+		this.x = x;
 	}
+	
+	public void move(int toy, int tox){
+
+		this.y = toy;
+		this.x = tox;
+		
+	}
+	
+	public abstract boolean isLegalMove(int toy, int tox);
 
 	public String toString(){
-		if(type == EMPTY){
+		if(this instanceof Empty){
 			return "empty";
 		}
 		
@@ -36,21 +42,23 @@ public class Piece {
 			color = "white";
 		}
 			
-		if(this.type == PAWN){
+		if(this instanceof  Pawn){
 			type = "pawn";
-		}else if(this.type == ROOK){
+		}else if(this instanceof Rook){
 			type = "rook";
-		}else if(this.type == KNIGHT){
+		}else if(this instanceof Knight){
 			type = "knight";
-		}else if(this.type == BISHOP){
+		}else if(this instanceof Bishop){
 			type = "bishop";
-		}else if(this.type == QUEEN){
+		}else if(this instanceof Queen){
 			type = "queen";
-		}else if(this.type == KING){
+		}else if(this instanceof King){
 			type = "king";
 		}
 
 		return color+type;
 	}
+
+	public abstract ArrayList<Coordinate> getPath(int toy, int tox);
 	
 }
