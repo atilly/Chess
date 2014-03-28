@@ -33,5 +33,10 @@ public class Rook extends Piece{
 		}
 		return l;
 	}
+
+	@Override
+	public boolean isLegalCapturingMove(int toy, int tox) {
+		return isLegalMove(toy,tox);
+	}
 	
 }

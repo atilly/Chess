@@ -30,8 +30,7 @@ public class CommandListener implements ActionListener{
 			from = new Coordinate(button.y, button.x);
 		}else{
 			to = new Coordinate(button.y, button.x);
-			if(board.isLegalMove(from.y, from.x, to.y, to.x, playerColor)){
-				board.move(from.y, from.x, to.y, to.x);				
+			if(board.move(from.y, from.x, to.y, to.x, playerColor)){		
 				gui.update();
 				agent.move(board);
 				gui.update();

@@ -25,5 +25,10 @@ public class King extends Piece{
 		ArrayList<Coordinate> l = new ArrayList<Coordinate>();
 		return l;
 	}
+
+	@Override
+	public boolean isLegalCapturingMove(int toy, int tox) {
+		return isLegalMove(toy,tox);
+	}
 	
 }

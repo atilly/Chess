@@ -29,6 +29,7 @@ public abstract class Piece {
 	}
 	
 	public abstract boolean isLegalMove(int toy, int tox);
+	public abstract boolean isLegalCapturingMove(int toy, int tox);
 
 	public String toString(){
 		if(this instanceof Empty){

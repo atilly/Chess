@@ -18,8 +18,7 @@ public class Agent {
 			for(int j = 0; j<Board.SIZE; j++){
 				for(int k = 0; k < Board.SIZE; k++){
 					for(int l = 0; l< Board.SIZE; l++){
-						if(board.isLegalMove(i,j,k,l, color)){
-							board.move(i, j, k, l);
+						if(board.move(i,j,k,l, color)){
 							return;
 						}
 					}

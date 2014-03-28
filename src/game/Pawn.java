@@ -43,4 +43,19 @@ public class Pawn extends Piece{
 		return l;
 	}
 
+
+	@Override
+	public boolean isLegalCapturingMove(int toy, int tox) {
+		int dy;
+		if(color == Piece.BLACK){
+			dy = toy -y;
+			
+		}else{
+			dy = y -toy;
+		}
+		int dx = Math.abs(x-tox);
+		return(dx ==1 && dy == 1);
+		
+	}
+
 }
