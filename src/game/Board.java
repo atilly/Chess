@@ -106,36 +106,18 @@ public class Board {
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 
-				int diffy = Math.abs(y - i);
-				int diffx = Math.abs(x - j);
-
-				if (((diffy == 1 && diffx == 2) || (diffy == 2 && diffx == 1))
-						&& i >= 0 && j >= 0 && i < 8 && j < 8) {
-					if (chessBoard[i][j] instanceof Knight
-							&& chessBoard[i][j].color != color) {
-						return true;
-					}
-				}
-
-				if (i == j || i == x || i == y || j == x || j == y) {
-					if (chessBoard[i][j].color != color
-							&& !(chessBoard[i][j] instanceof Empty)) {
-						if (chessBoard[i][j].isLegalCapturingMove(y, x)) {
-							check = true;
-							for (Coordinate c : chessBoard[i][j].getPath(y, x)) {
-								if (!(chessBoard[c.y][c.x] instanceof Empty)) {
-									check = false;
-								}
-							}
-							if (check) {
-								return check;
+				if (chessBoard[i][j].color != color && !(chessBoard[i][j] instanceof Empty)) {
+					if (chessBoard[i][j].isLegalCapturingMove(y, x)) {
+						check = true;
+						for (Coordinate c : chessBoard[i][j].getPath(y, x)) {
+							if (!(chessBoard[c.y][c.x] instanceof Empty)) {
+								check = false;
 							}
 						}
-						continue;
-					} else if (chessBoard[i][j].color == color) {
-						continue;
+						if (check) {
+							return check;
+						}
 					}
-
 				}
 			}
 		}
