@@ -2,6 +2,7 @@ package gui;
 
 import game.Board;
 import game.Coordinate;
+import game.Move;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,7 +33,8 @@ public class CommandListener implements ActionListener{
 			to = new Coordinate(button.y, button.x);
 			if(board.move(from.y, from.x, to.y, to.x, playerColor)){		
 				gui.update();
-				agent.move(board);
+			//	System.out.println(from.y+ " " + from.x+ " " + to.y+ " " + to.x);
+				agent.move(board, new Move(from.y, from.x, to.y, to.x));
 				gui.update();
 			}
 			from = null;

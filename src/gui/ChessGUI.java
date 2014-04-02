@@ -29,6 +29,7 @@ public class ChessGUI {
 		buttons = new ChessButton[8][8];
 		Agent agent = new Agent(Piece.BLACK);
 		cmd = new CommandListener(board, this, agent, Piece.WHITE);
+		agent.parseDatabase();
 		images = new HashMap<String, BufferedImage>();
 		
 		JFrame frame = new JFrame("Chess");
