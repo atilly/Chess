@@ -9,6 +9,13 @@ public class Rook extends Piece{
 		
 	}
 
+	public void move(int toy, int tox){
+		canCastle = false;
+		this.y = toy;
+		this.x = tox;
+		
+	}
+	
 	@Override
 	public boolean isLegalMove(int toy, int tox) {
 		if(x == tox || y == toy){

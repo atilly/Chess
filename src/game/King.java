@@ -8,7 +8,14 @@ public class King extends Piece{
 		super(color,y,x);
 		
 	}
-
+	
+	public void move(int toy, int tox){
+		canCastle = false;
+		this.y = toy;
+		this.x = tox;
+		
+	}
+	
 	@Override
 	public boolean isLegalMove(int toy, int tox) {
 
@@ -18,12 +25,23 @@ public class King extends Piece{
 			return true;
 		}
 		
+		if(canCastle && diffx == 2 && y == toy){
+			return true;
+		}
+		
 		return false;
 	}
 	@Override
 	public ArrayList<Coordinate> getPath(int toy, int tox) {
 		ArrayList<Coordinate> l = new ArrayList<Coordinate>();
+		for(int i = x+1; i<tox; i++){
+			l.add(new Coordinate(y,i));
+		}
+		for(int i = x-1; i>tox; i--){
+			l.add(new Coordinate(y,i));
+		}
 		return l;
+		
 	}
 
 	@Override

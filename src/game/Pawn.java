@@ -3,7 +3,7 @@ package game;
 import java.util.ArrayList;
 
 public class Pawn extends Piece{
-
+	
 	public Pawn(int color, int y, int x) {
 		super(color,y,x);
 		
@@ -33,7 +33,6 @@ public class Pawn extends Piece{
 		
 		return false;
 	}
-
 
 	@Override
 	public ArrayList<Coordinate> getPath(int toy, int tox) {

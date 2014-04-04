@@ -5,6 +5,7 @@ public class Board {
 	private Piece chessBoard[][];
 	public static final int SIZE = 8;
 	private Coordinate[] kingPositions;
+	private Pawn enPassantPawn;
 
 	public Board() {
 		chessBoard = new Piece[SIZE][SIZE];
@@ -78,14 +79,77 @@ public class Board {
 		} else {
 			return false;
 		}
+		int diffx = Math.abs(tox - fromx);
 
 		if (piece instanceof Pawn) {
-			if (other instanceof Empty && piece.x != tox)
-				return false;
+			
+			if(piece.x != tox && chessBoard[piece.y][tox].equals(enPassantPawn)){
+				chessBoard[piece.y][tox] = new Empty(piece.y, tox);
+			}else if(piece.x != tox && other instanceof Empty){
+				return false;				
+			}
 			if (!(other instanceof Empty) && piece.x == tox)
 				return false;
+			
+
+
+			if(color == Piece.BLACK && toy == 7){
+				chessBoard[fromy][fromx] = new Queen(color,toy,tox);
+			}else if(color == Piece.WHITE && toy == 0){
+				chessBoard[fromy][fromx] = new Queen(color,toy,tox);
+			}
+			int diffy = Math.abs(toy - fromy);
+			if(diffy == 2){
+				enPassantPawn = (Pawn) piece;
+			}
+			
 		}
 
+		if (piece instanceof King && piece.canCastle && diffx == 2){
+
+				if(fromx-tox > 0){
+					Piece other2 = chessBoard[toy][tox+1];
+					if(chessBoard[toy][0].canCastle){
+						makeMove(fromy, fromx, toy, tox+1);
+						if (kingIsInCheck(color)) {
+							makeMove(toy, tox+1, fromy, fromx);
+							chessBoard[toy][tox+1] = other2;
+							piece.canCastle = true;
+							return false;
+						}
+						makeMove(fromy, fromx-1, toy, tox);
+						if (kingIsInCheck(color)) {
+							makeMove(toy, tox, fromy, fromx);
+							chessBoard[toy][tox] = other;
+							piece.canCastle = true;
+							return false;
+						}
+						tox = 3;
+						fromx = 0;
+					}
+				}else{
+					Piece other2 = chessBoard[toy][tox-1];
+					if(chessBoard[toy][7].canCastle){
+						makeMove(fromy, fromx, toy, tox-1);
+						if (kingIsInCheck(color)) {
+							makeMove(toy, tox-1, fromy, fromx);
+							chessBoard[toy][tox-1] = other2;
+							piece.canCastle = true;
+							return false;
+						}
+						makeMove(fromy, fromx+1, toy, tox);
+						if (kingIsInCheck(color)) {
+							makeMove(toy, tox, fromy, fromx);
+							chessBoard[toy][tox] = other;
+							piece.canCastle = true;
+							return false;
+						}
+						tox = 5;
+						fromx = 7;
+					}
+					
+				}
+		}
 		makeMove(fromy, fromx, toy, tox);
 
 		if (kingIsInCheck(color)) {
