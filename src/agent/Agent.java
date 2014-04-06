@@ -24,14 +24,15 @@ import util.DatabaseParser;
 
 public class Agent {
 
+	private final Move nullMove = new Move(-1,-1,-1,-1);
 	private int color;
 	private int currentMove = 0;
-	private final static int MAX_DEPTH = 3;
+	private final static int MAX_DEPTH = 4;
 	private Move bestMove;
 	private ArrayList<ArrayList<Move>> allOpeningMoves;
 	
 	public Agent(int color){
-		bestMove = new Move(0,1,2,0);
+		bestMove = nullMove;
 		this.color = color;
 		if(color == Piece.BLACK){
 			currentMove = 1;
@@ -89,34 +90,43 @@ public class Agent {
 		if (legalMoves.size() == 0) {
 			return evaluate(currentPlayer, board);
 		}
+
+		if (bestMove.equals(nullMove)) {
+			bestMove = legalMoves.get(0);
+		}
+
+		//If maximizing player:
 		if (currentPlayer == color) {
 			for (Move move : legalMoves) {
 				Board newBoard = board.makeMove(move.fromy,move.fromx,move.toy,move.tox);
-				alpha = Math.max(
-						alpha,
-						alfaBeta(newBoard, depth + 1, maxDepth, alpha, beta,
-								changePlayer(currentPlayer)));
 
+				int score = alfaBeta(newBoard, depth + 1, maxDepth, alpha,
+						beta, changePlayer(currentPlayer));
+				if (score > alpha) {
+					alpha = score;
+					if (depth == 0) {
+						bestMove = move;
+					}
+				}
 				if (beta <= alpha) {
-					bestMove = move;
 					break;
 				}
-				bestMove = move;
-
 			}
 			return alpha;
 		}
 
+		//If minimizing player:
 		for (Move move : legalMoves) {
-			Board newBoard = board.makeMove(move.fromy,move.fromx,move.toy,move.tox);
-			beta = Math.min(
-					beta,
-					alfaBeta(newBoard, depth + 1, maxDepth, alpha, beta,
-							changePlayer(currentPlayer)));
+			Board newBoard = board.makeMove(move.fromy, move.fromx, move.toy, move.tox);
+
+			int score = alfaBeta(newBoard, depth + 1, maxDepth, alpha, beta,
+					changePlayer(currentPlayer));
+			if (score < beta) {
+				beta = score;
+			}
 			if (beta <= alpha) {
 				break;
 			}
-
 		}
 		return beta;
 	}

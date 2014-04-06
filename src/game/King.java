@@ -56,7 +56,7 @@ public class King extends Piece{
 	}
 	
 	public int getValue(){
-		return Integer.MAX_VALUE;
+		return 100;
 	}
 	
 }

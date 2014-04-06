@@ -13,12 +13,13 @@ public class Queen extends Piece{
 	@Override
 	public boolean isLegalMove(int toy, int tox) {
 
-		if(x == tox || y == toy || Math.abs((x-tox)/(y-toy)) == 1){
+		if(x == tox || y == toy || Math.abs((x-tox)%(y-toy)) == 0){
 			return true;
 		}
 		
 		return false;
 	}
+	
 	@Override
 	public ArrayList<Coordinate> getPath(int toy, int tox) {
 		ArrayList<Coordinate> l = new ArrayList<Coordinate>();
@@ -28,10 +29,10 @@ public class Queen extends Piece{
 		}else if(toy < y && x == tox){
 			for(int i = toy+1; i < y; ++i)
 				l.add(new Coordinate(i,x));
-		}else if(tox > x && y== toy){
+		}else if(tox > x && y == toy){
 			for(int i = x+1; i < tox; ++i)
 				l.add(new Coordinate(y,i));
-		}else if(tox < x && y== toy){
+		}else if(tox < x && y == toy){
 			for(int i = tox+1; i < x; ++i)
 				l.add(new Coordinate(y,i));
 		}else if(toy > y && tox > x){

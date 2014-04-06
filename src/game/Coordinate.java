@@ -9,4 +9,8 @@ public class Coordinate {
 		this.x = x;
 	}
 	
+	public String toString(){
+		return y + " " + x;
+	}
+	
 }

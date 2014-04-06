@@ -100,7 +100,7 @@ public class Board {
 		}
 		
 		Piece piece = chessBoard[fromy][fromx];
-		Piece other =chessBoard[toy][tox];
+		Piece other = chessBoard[toy][tox];
 		
 		if (piece.isLegalMove(toy, tox)) {
 			if (!(piece instanceof Knight)) {
@@ -132,7 +132,6 @@ public class Board {
 		int diffx = Math.abs(tox - fromx);
 		
 		if (piece instanceof King && piece.canCastle && diffx == 2){
-
 				if(fromx-tox > 0){
 					if(newBoard.chessBoard[toy][0].canCastle){
 						newBoard = makeMove(fromy, fromx, toy, tox+1);
@@ -195,19 +194,8 @@ public class Board {
 				}
 			}
 		}
-
 		return check;
 
-	}
-
-	public boolean canMakeMove(int currentPlayer) {
-		
-		ArrayList<Move> moves = getLegalMoves(currentPlayer);
-		if(moves.size() == 0){
-			return false;			
-		}
-		
-		return true;
 	}
 	
 	public ArrayList<Move> getLegalMoves(int color){
