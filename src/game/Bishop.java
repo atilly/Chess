@@ -43,4 +43,12 @@ public class Bishop extends Piece{
 		return isLegalMove(toy,tox);
 	}
 	
+	public Piece clone(){
+		return new Bishop(color,y,x);
+	}
+	
+	public int getValue(){
+		return 3;
+	}
+	
 }

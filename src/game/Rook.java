@@ -46,4 +46,12 @@ public class Rook extends Piece{
 		return isLegalMove(toy,tox);
 	}
 	
+	public Piece clone(){
+		Rook rook = new Rook(color,y,x);
+		rook.canCastle = canCastle;
+		return rook;
+	}
+	public int getValue(){
+		return 5;
+	}
 }

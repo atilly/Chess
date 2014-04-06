@@ -29,7 +29,6 @@ public class ChessGUI {
 		buttons = new ChessButton[8][8];
 		Agent agent = new Agent(Piece.BLACK);
 		cmd = new CommandListener(board, this, agent, Piece.WHITE);
-		agent.parseDatabase();
 		images = new HashMap<String, BufferedImage>();
 		
 		JFrame frame = new JFrame("Chess");
@@ -89,7 +88,8 @@ public class ChessGUI {
 		}
 	}
 
-	public void update() {
+	public void update(Board board) {
+		this.board = board;
 		boolean dark = true;
 		for(int i = 0; i<8; i++){
 			for(int j = 0; j<8; j++){

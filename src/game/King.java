@@ -49,4 +49,14 @@ public class King extends Piece{
 		return isLegalMove(toy,tox);
 	}
 	
+	public Piece clone(){
+		King king = new King(color,y,x);
+		king.canCastle = canCastle;
+		return king;
+	}
+	
+	public int getValue(){
+		return Integer.MAX_VALUE;
+	}
+	
 }

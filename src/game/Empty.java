@@ -24,5 +24,13 @@ public class Empty extends Piece{
 	public boolean isLegalCapturingMove(int toy, int tox) {
 		return isLegalMove(toy,tox);
 	}
+	
+	public Piece clone(){
+		return new Empty(y,x);
+	}
+	
+	public int getValue(){
+		return 0;
+	}
 
 }

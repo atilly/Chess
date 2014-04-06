@@ -1,5 +1,7 @@
 package game;
 
+import java.util.ArrayList;
+
 public class Board {
 
 	private Piece chessBoard[][];
@@ -8,6 +10,9 @@ public class Board {
 	private Pawn enPassantPawn;
 
 	public Board() {
+		kingPositions = new Coordinate[2];
+		kingPositions[Piece.WHITE] = new Coordinate(7, 4);
+		kingPositions[Piece.BLACK] = new Coordinate(0, 4);
 		chessBoard = new Piece[SIZE][SIZE];
 	}
 
@@ -36,9 +41,7 @@ public class Board {
 		chessBoard[7][5] = new Bishop(Piece.WHITE, 7, 5);
 		chessBoard[7][3] = new Queen(Piece.WHITE, 7, 3);
 		chessBoard[7][4] = new King(Piece.WHITE, 7, 4);
-		kingPositions = new Coordinate[2];
-		kingPositions[Piece.WHITE] = new Coordinate(7, 4);
-		kingPositions[Piece.BLACK] = new Coordinate(0, 4);
+
 
 	}
 
@@ -46,28 +49,59 @@ public class Board {
 		return chessBoard;
 	}
 
-	public void makeMove(int fromy, int fromx, int toy, int tox) {
+	public Board makeMove(int fromy, int fromx, int toy, int tox) {
 
-		chessBoard[toy][tox] = chessBoard[fromy][fromx];
-		chessBoard[toy][tox].move(toy, tox);
-		chessBoard[fromy][fromx] = new Empty(fromy, fromx);
-		if (chessBoard[toy][tox] instanceof King) {
-			kingPositions[chessBoard[toy][tox].color] = new Coordinate(toy, tox);
+		Board newBoard = clone();
+		Piece[][] newChessBoard = newBoard.chessBoard;
+		
+		newChessBoard[toy][tox] = newChessBoard[fromy][fromx];
+		newChessBoard[toy][tox].move(toy, tox);
+		newChessBoard[fromy][fromx] = new Empty(fromy, fromx);
+		if (newChessBoard[toy][tox] instanceof King) {
+			newBoard.kingPositions[newChessBoard[toy][tox].color] = new Coordinate(toy, tox);
+			if(tox - fromx == 2){
+				newChessBoard[toy][tox-1] = newChessBoard[toy][tox+1];
+				newChessBoard[toy][tox+1] = new Empty(toy,tox+1);
+				newChessBoard[toy][tox-1].move(toy, tox-1);
+			}else if(fromx - tox == 2){
+				newChessBoard[toy][tox+1] = newChessBoard[toy][tox-2];
+				newChessBoard[toy][tox-2] = new Empty(toy,tox-2);
+				newChessBoard[toy][tox+1].move(toy, tox+1);
+			}
 		}
+		
+		if (newChessBoard[toy][tox] instanceof Pawn) {
+			if(newChessBoard[toy][tox].color == Piece.BLACK && toy == 7){
+				newBoard.chessBoard[toy][tox] = new Queen(newChessBoard[toy][tox].color,toy,tox);
+			}else if(newChessBoard[toy][tox].color == Piece.WHITE && toy == 0){
+				newBoard.chessBoard[toy][tox] = new Queen(newChessBoard[toy][tox].color,toy,tox);
+			}
+			
+			if(fromx != tox && newBoard.chessBoard[fromy][tox].equals(newBoard.enPassantPawn)){
+				newBoard.chessBoard[fromy][tox] = new Empty(fromy, tox);				
+			}
+			
+			int diffy = Math.abs(toy - fromy);
+			if(diffy == 2){
+				newBoard.enPassantPawn = (Pawn) newChessBoard[toy][tox];
+			}
+		}
+
+		return newBoard;
 
 	}
 
-	public boolean move(int fromy, int fromx, int toy, int tox, int color) {
+	public boolean isLegalMove(int fromy, int fromx, int toy, int tox, int color) {
+		if(chessBoard[fromy][fromx].color != color){
+			return false;
+		}
+		if(chessBoard[fromy][fromx].color == chessBoard[toy][tox].color){
+			return false;
+		}
+		
 		Piece piece = chessBoard[fromy][fromx];
-		if (piece.color != color) {
-			return false;
-		}
-		Piece other = chessBoard[toy][tox];
-
-		if (piece.color == other.color) {
-			return false;
-		}
-
+		Piece other =chessBoard[toy][tox];
+		
 		if (piece.isLegalMove(toy, tox)) {
 			if (!(piece instanceof Knight)) {
 				for (Coordinate c : piece.getPath(toy, tox)) {
@@ -79,69 +113,47 @@ public class Board {
 		} else {
 			return false;
 		}
-		int diffx = Math.abs(tox - fromx);
-
+		
 		if (piece instanceof Pawn) {
 			
 			if(piece.x != tox && chessBoard[piece.y][tox].equals(enPassantPawn)){
-				chessBoard[piece.y][tox] = new Empty(piece.y, tox);
+
 			}else if(piece.x != tox && other instanceof Empty){
 				return false;				
 			}
 			if (!(other instanceof Empty) && piece.x == tox)
 				return false;
-			
 
-
-			if(color == Piece.BLACK && toy == 7){
-				chessBoard[fromy][fromx] = new Queen(color,toy,tox);
-			}else if(color == Piece.WHITE && toy == 0){
-				chessBoard[fromy][fromx] = new Queen(color,toy,tox);
-			}
-			int diffy = Math.abs(toy - fromy);
-			if(diffy == 2){
-				enPassantPawn = (Pawn) piece;
-			}
-			
 		}
-
+		
+		Board newBoard = clone();
+		piece = newBoard.chessBoard[fromy][fromx];
+		other = newBoard.chessBoard[toy][tox];
+		int diffx = Math.abs(tox - fromx);
+		
 		if (piece instanceof King && piece.canCastle && diffx == 2){
 
 				if(fromx-tox > 0){
-					Piece other2 = chessBoard[toy][tox+1];
-					if(chessBoard[toy][0].canCastle){
-						makeMove(fromy, fromx, toy, tox+1);
-						if (kingIsInCheck(color)) {
-							makeMove(toy, tox+1, fromy, fromx);
-							chessBoard[toy][tox+1] = other2;
-							piece.canCastle = true;
+					if(newBoard.chessBoard[toy][0].canCastle){
+						newBoard = makeMove(fromy, fromx, toy, tox+1);
+						if (newBoard.kingIsInCheck(color)) {
 							return false;
 						}
-						makeMove(fromy, fromx-1, toy, tox);
-						if (kingIsInCheck(color)) {
-							makeMove(toy, tox, fromy, fromx);
-							chessBoard[toy][tox] = other;
-							piece.canCastle = true;
+						newBoard = makeMove(fromy, fromx-1, toy, tox);
+						if (newBoard.kingIsInCheck(color)) {
 							return false;
 						}
 						tox = 3;
 						fromx = 0;
 					}
 				}else{
-					Piece other2 = chessBoard[toy][tox-1];
-					if(chessBoard[toy][7].canCastle){
-						makeMove(fromy, fromx, toy, tox-1);
-						if (kingIsInCheck(color)) {
-							makeMove(toy, tox-1, fromy, fromx);
-							chessBoard[toy][tox-1] = other2;
-							piece.canCastle = true;
+					if(newBoard.chessBoard[toy][7].canCastle){
+						newBoard = makeMove(fromy, fromx, toy, tox-1);
+						if (newBoard.kingIsInCheck(color)) {
 							return false;
 						}
-						makeMove(fromy, fromx+1, toy, tox);
-						if (kingIsInCheck(color)) {
-							makeMove(toy, tox, fromy, fromx);
-							chessBoard[toy][tox] = other;
-							piece.canCastle = true;
+						newBoard = makeMove(fromy, fromx+1, toy, tox);
+						if (newBoard.kingIsInCheck(color)) {
 							return false;
 						}
 						tox = 5;
@@ -150,11 +162,9 @@ public class Board {
 					
 				}
 		}
-		makeMove(fromy, fromx, toy, tox);
+		newBoard = makeMove(fromy, fromx, toy, tox);
 
-		if (kingIsInCheck(color)) {
-			makeMove(toy, tox, fromy, fromx);
-			chessBoard[toy][tox] = other;
+		if (newBoard.kingIsInCheck(color)) {
 			return false;
 		}
 
@@ -188,6 +198,58 @@ public class Board {
 
 		return check;
 
+	}
+
+	public boolean canMakeMove(int currentPlayer) {
+		
+		ArrayList<Move> moves = getLegalMoves(currentPlayer);
+		if(moves.size() == 0){
+			return false;			
+		}
+		
+		return true;
+	}
+	
+	public ArrayList<Move> getLegalMoves(int color){
+		ArrayList<Move> moves = new ArrayList<Move>();
+		for(int i = 0; i<SIZE; i++){
+			for(int j = 0; j<SIZE; j++){
+				for(int k = 0; k<SIZE; k++){
+					for(int l = 0; l<SIZE; l++){
+						if(isLegalMove(i,j,k,l,color)){
+							moves.add(new Move(i,j,k,l));
+						}
+					}
+				}
+			}
+		}
+		return moves;
+	}
+	
+	public Board clone() {
+		Board b = new Board();
+		b.setState(getState());
+		if(enPassantPawn !=null){
+			b.enPassantPawn = (Pawn) enPassantPawn.clone();			
+		}
+		b.kingPositions[Piece.BLACK] = new Coordinate(kingPositions[Piece.BLACK].y, kingPositions[Piece.BLACK].x);
+		b.kingPositions[Piece.WHITE] = new Coordinate(kingPositions[Piece.WHITE].y, kingPositions[Piece.WHITE].x);
+		return b;
+	}
+	
+	public Piece[][] getState() {
+		Piece[][] state = new Piece[SIZE][SIZE];
+	
+		for (int i = 0; i < SIZE; i++) {
+			for (int j = 0; j < SIZE; j++) {
+				state[i][j] = chessBoard[i][j].clone();
+			}
+		}
+		return state;
+	}
+
+	private void setState(Piece[][] state) {
+		chessBoard = state;
 	}
 
 }

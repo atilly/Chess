@@ -91,5 +91,7 @@ public abstract class Piece {
 	}
 
 	public abstract ArrayList<Coordinate> getPath(int toy, int tox);
+	public abstract Piece clone();
+	public abstract int getValue();
 	
 }

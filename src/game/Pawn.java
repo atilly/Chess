@@ -56,5 +56,11 @@ public class Pawn extends Piece{
 		return(dx ==1 && dy == 1);
 		
 	}
-
+	
+	public Piece clone(){
+		return new Pawn(color,y,x);
+	}
+	public int getValue(){
+		return 1;
+	}
 }

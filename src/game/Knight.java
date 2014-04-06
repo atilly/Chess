@@ -30,4 +30,11 @@ public class Knight extends Piece{
 		return isLegalMove(toy,tox);
 	}
 	
+	public Piece clone(){
+		return new Knight(color,y,x);
+	}
+	public int getValue(){
+		return 3;
+	}
+	
 }

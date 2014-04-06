@@ -32,16 +32,20 @@ public class CommandListener implements ActionListener{
 			from = new Coordinate(button.y, button.x);
 		}else{
 			to = new Coordinate(button.y, button.x);
-			if(board.move(from.y, from.x, to.y, to.x, playerColor)){		
-				gui.update();
+			if(board.isLegalMove(from.y, from.x, to.y, to.x, playerColor)){
+				board = board.makeMove(from.y, from.x, to.y, to.x);
+				gui.update(board);
+				/*
 				if(playerColor == Piece.WHITE){
 					playerColor = Piece.BLACK;
 				}else{
 					playerColor = Piece.WHITE;
 				}
+				*/
 			//	System.out.println(from.y+ " " + from.x+ " " + to.y+ " " + to.x);
-	//			agent.move(board, new Move(from.y, from.x, to.y, to.x));
-	//			gui.update();
+				Move move = agent.move(board, new Move(from.y, from.x, to.y, to.x));
+				board = board.makeMove(move.fromy, move.fromx, move.toy, move.tox);
+				gui.update(board);
 			}
 			from = null;
 		}
