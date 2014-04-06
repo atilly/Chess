@@ -13,7 +13,7 @@ public class Queen extends Piece{
 	@Override
 	public boolean isLegalMove(int toy, int tox) {
 
-		if(x == tox || y == toy || Math.abs((x-tox)%(y-toy)) == 0){
+		if(x == tox || y == toy || (Math.abs(x-tox) == Math.abs((y-toy)))){
 			return true;
 		}
 		

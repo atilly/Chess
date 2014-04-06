@@ -56,7 +56,7 @@ public class King extends Piece{
 	}
 	
 	public int getValue(){
-		return 100;
+		return 1;
 	}
 	
 }
