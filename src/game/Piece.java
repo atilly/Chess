@@ -90,8 +90,10 @@ public abstract class Piece {
 		return color+type;
 	}
 
+	public abstract int getValue();
+	
 	public abstract ArrayList<Coordinate> getPath(int toy, int tox);
 	public abstract Piece clone();
-	public abstract int getValue();
+
 	
 }

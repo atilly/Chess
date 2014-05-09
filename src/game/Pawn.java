@@ -4,12 +4,17 @@ import java.util.ArrayList;
 
 public class Pawn extends Piece{
 	
+	public static int value = 10;
+	
 	public Pawn(int color, int y, int x) {
 		super(color,y,x);
 		
 	}
 
-
+	public int getValue(){
+		return value;
+	}
+	
 	@Override
 	public boolean isLegalMove(int toy, int tox) {
 		if(color == Piece.WHITE){
@@ -60,7 +65,5 @@ public class Pawn extends Piece{
 	public Piece clone(){
 		return new Pawn(color,y,x);
 	}
-	public int getValue(){
-		return 1;
-	}
+
 }

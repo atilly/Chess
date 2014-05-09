@@ -27,7 +27,7 @@ public class Agent {
 	private final Move nullMove = new Move(-1,-1,-1,-1);
 	private int color;
 	private int currentMove = 0;
-	private final static int MAX_DEPTH = 4;
+	private final static int MAX_DEPTH = 1;
 	private Move bestMove;
 	private ArrayList<ArrayList<Move>> allOpeningMoves;
 	
@@ -99,9 +99,10 @@ public class Agent {
 		if (currentPlayer == color) {
 			for (Move move : legalMoves) {
 				Board newBoard = board.makeMove(move.fromy,move.fromx,move.toy,move.tox);
-
+				
 				int score = alfaBeta(newBoard, depth + 1, maxDepth, alpha,
 						beta, changePlayer(currentPlayer));
+				
 				if (score > alpha) {
 					alpha = score;
 					if (depth == 0) {

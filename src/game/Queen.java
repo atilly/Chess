@@ -5,11 +5,17 @@ import java.util.ArrayList;
 
 public class Queen extends Piece{
 
+	public static int value = 90;
+	
 	public Queen(int color, int y, int x) {
 		super(color,y,x);
 		
 	}
 
+	public int getValue(){
+		return value;
+	}
+	
 	@Override
 	public boolean isLegalMove(int toy, int tox) {
 
@@ -59,7 +65,5 @@ public class Queen extends Piece{
 	public Piece clone(){
 		return new Queen(color,y,x);
 	}
-	public int getValue(){
-		return 9;
-	}
+
 }

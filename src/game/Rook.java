@@ -4,11 +4,17 @@ import java.util.ArrayList;
 
 public class Rook extends Piece{
 
+	public static int value = 50;
+	
 	public Rook(int color, int y, int x) {
 		super(color,y,x);
 		
 	}
 
+	public int getValue(){
+		return value;
+	}
+	
 	public void move(int toy, int tox){
 		canCastle = false;
 		this.y = toy;
@@ -51,7 +57,5 @@ public class Rook extends Piece{
 		rook.canCastle = canCastle;
 		return rook;
 	}
-	public int getValue(){
-		return 5;
-	}
+
 }

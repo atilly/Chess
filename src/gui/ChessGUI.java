@@ -22,16 +22,18 @@ public class ChessGUI {
 	private ChessButton[][] buttons;
 	private CommandListener cmd;
 	private HashMap<String, BufferedImage> images;
+	private JFrame frame;
 	
 	public ChessGUI(Board board){
 
 		this.board = board;
 		buttons = new ChessButton[8][8];
 		Agent agent = new Agent(Piece.BLACK);
-		cmd = new CommandListener(board, this, agent, Piece.WHITE);
+		cmd = new CommandListener(board, this, agent, Piece.WHITE, Piece.BLACK);
 		images = new HashMap<String, BufferedImage>();
 		
-		JFrame frame = new JFrame("Chess");
+		frame = new JFrame("Chess");
+		
 		GridLayout grid = new GridLayout(8,8);
 		frame.setLayout(grid);
 		initImages();

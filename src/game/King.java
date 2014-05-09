@@ -4,9 +4,15 @@ import java.util.ArrayList;
 
 public class King extends Piece{
 
+	public static int value = 1000;
+	
 	public King(int color, int y, int x) {
 		super(color,y,x);
 		
+	}
+	
+	public int getValue(){
+		return value;
 	}
 	
 	public void move(int toy, int tox){
@@ -53,10 +59,6 @@ public class King extends Piece{
 		King king = new King(color,y,x);
 		king.canCastle = canCastle;
 		return king;
-	}
-	
-	public int getValue(){
-		return 1;
 	}
 	
 }
