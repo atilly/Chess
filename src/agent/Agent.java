@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import pgnparse.Color;
 import pgnparse.MalformedMoveException;
@@ -47,7 +48,7 @@ public class Agent {
 		if(allOpeningMoves.size() != 0){
 			System.out.println("Using opening database, current number of games with this opening: " + allOpeningMoves.size());
 			Move nextMove = getNextOpeningMove(allOpeningMoves);
-			board.isLegalMove(nextMove.fromy,nextMove.fromx,nextMove.toy,nextMove.tox, color);
+//			board.isLegalMove(nextMove.fromy,nextMove.fromx,nextMove.toy,nextMove.tox, color);
 			currentMove++;
 			getOpening(nextMove);
 			currentMove++;
@@ -61,18 +62,23 @@ public class Agent {
 	}
 
 	private Move getNextOpeningMove(ArrayList<ArrayList<Move>> moves) {
-		return moves.get(0).get(currentMove);
+		Random rand = new Random();
+		int index = rand.nextInt(moves.size());
+		return moves.get(index).get(currentMove);
 	}
 
 	public void getOpening(Move lastMove) {
-		for(int i = 0; i<allOpeningMoves.size(); ++i){
-			ArrayList<Move> game = allOpeningMoves.get(i);
-			Move move = game.get(currentMove-1);
-			if(!move.equals(lastMove)){
-				allOpeningMoves.remove(i);
-				--i;
+		if(lastMove != null){
+			for(int i = 0; i<allOpeningMoves.size(); ++i){
+				ArrayList<Move> game = allOpeningMoves.get(i);
+				Move move = game.get(currentMove-1);
+				if(!move.equals(lastMove)){
+					allOpeningMoves.remove(i);
+					--i;
+				}
 			}
 		}
+
 	}
 	
 	private Move calculateBestMove(Board board) {
