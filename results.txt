@@ -1,0 +1,14 @@
+loss
+pawn=12
+bishop=34
+knight=28
+rook=49
+queen=73
+king=1058
+loss
+pawn=10
+bishop=31
+knight=34
+rook=61
+queen=109
+king=1246
