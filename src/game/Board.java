@@ -184,7 +184,7 @@ public class Board {
 		return true;
 	}
 
-	private boolean kingIsInCheck(int color) {
+	public boolean kingIsInCheck(int color) {
 
 		boolean check = false;
 		int y = kingPositions[color].y;

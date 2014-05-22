@@ -1,32 +1,13 @@
 package agent;
-
-import game.Bishop;
 import game.Board;
-import game.Coordinate;
-import game.King;
-import game.Knight;
 import game.Move;
-import game.Pawn;
 import game.Piece;
-import game.Queen;
-import game.Rook;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Random;
-
-import pgnparse.Color;
-import pgnparse.MalformedMoveException;
-import pgnparse.PGNGame;
-import pgnparse.PGNMove;
-import pgnparse.PGNParseException;
-import pgnparse.PGNParser;
 import util.DatabaseParser;
 
 public class Agent {
@@ -105,7 +86,6 @@ public class Agent {
 		if(allOpeningMoves.size() != 0 && currentMove < 9){
 			System.out.println("Using opening database, current number of games with this opening: " + allOpeningMoves.size());
 			Move nextMove = getNextOpeningMove(allOpeningMoves);
-//			board.isLegalMove(nextMove.fromy,nextMove.fromx,nextMove.toy,nextMove.tox, color);
 			currentMove++;
 			getOpening(nextMove);
 			currentMove++;
@@ -151,7 +131,13 @@ public class Agent {
 
 		ArrayList<Move> legalMoves = board.getLegalMoves(currentPlayer);
 		if (legalMoves.size() == 0) {
-			return evaluate(currentPlayer, board);
+			
+			if(board.kingIsInCheck(currentPlayer)){
+				return Integer.MAX_VALUE;
+			}else{
+				return Integer.MIN_VALUE;
+			}
+
 		}
 
 		if (bestMove.equals(nullMove)) {

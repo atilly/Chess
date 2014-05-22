@@ -68,3 +68,17 @@ knight=36
 rook=55
 queen=101
 king=1174
+win
+pawn=10
+bishop=32
+knight=33
+rook=53
+queen=96
+king=1087
+win
+pawn=10
+bishop=32
+knight=33
+rook=53
+queen=96
+king=1087
