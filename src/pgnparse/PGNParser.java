@@ -289,6 +289,7 @@ public class PGNParser {
 					updateNextMove(move, board);
 					switchColor(color);
 				} else {
+					//move = new PGNMove(rawMoves[i]);
 					throw new PGNParseException(move.getFullMove());
 				}
 			}

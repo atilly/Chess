@@ -28,7 +28,7 @@ public class Agent {
 	private final Move nullMove = new Move(-1,-1,-1,-1);
 	private int color;
 	private int currentMove = 0;
-	private final static int MAX_DEPTH = 1;
+	private final static int MAX_DEPTH = 4;
 	private Move bestMove;
 	private ArrayList<ArrayList<Move>> allOpeningMoves;
 	
@@ -45,7 +45,7 @@ public class Agent {
 	
 	public Move move(Board board, Move lastMove){
 		getOpening(lastMove);
-		if(allOpeningMoves.size() != 0){
+		if(allOpeningMoves.size() != 0 && currentMove < 9){
 			System.out.println("Using opening database, current number of games with this opening: " + allOpeningMoves.size());
 			Move nextMove = getNextOpeningMove(allOpeningMoves);
 //			board.isLegalMove(nextMove.fromy,nextMove.fromx,nextMove.toy,nextMove.tox, color);

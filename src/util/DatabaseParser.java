@@ -34,7 +34,8 @@ public class DatabaseParser {
 			int j = 0;
 			StringBuilder sb = new StringBuilder();
 			//50007
-			while(reader.ready() && j<18){
+			//120
+			while(reader.ready() && j<50007){
 				j++;
 				String line = reader.readLine();
 				sb.append(line+"\n");

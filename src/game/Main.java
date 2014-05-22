@@ -1,7 +1,9 @@
 package game;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -9,12 +11,17 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
 import pgnparse.MalformedMoveException;
+import pgnparse.PGNGame;
 import pgnparse.PGNMove;
+import pgnparse.PGNParser;
 import util.DatabaseParser;
+import util.ResultWriter;
 import agent.Agent;
 import gui.ChessGUI;
 
@@ -38,7 +45,7 @@ public class Main {
 				while(reader.ready()){
 					String line = reader.readLine();
 
-					if(line.equals("win")){
+					if(line.equals("win") || line.equals("draw")){
 						count++;
 						for(int i=0; i<6; i++){
 							line = reader.readLine();
@@ -69,7 +76,6 @@ public class Main {
 		board.newgame();
 
 		if(args.length > 1 && args[1].equals("gnuchess")){
-			Runtime runtime = Runtime.getRuntime();
 			InputStream is;
 			OutputStream os;
 			
@@ -77,20 +83,18 @@ public class Main {
 				ProcessBuilder pb = new ProcessBuilder("/h/d3/s/dt09at1/edan50/gnuchess-6.1.1/src/gnuchess");
 				Process p = pb.start();
 				is = p.getInputStream();
-				Scanner scan = new Scanner(is);
 				os = p.getOutputStream();
 				PrintWriter writer = new PrintWriter(os);
-//				InputStreamReader reader = new InputStreamReader(is);
-//				BufferedReader br = new BufferedReader(reader);
+				BufferedReader br = new BufferedReader(new InputStreamReader(is));
 				Agent agent = new Agent(Piece.WHITE);
 				ChessGUI gui = new ChessGUI(board, false);
 				Move nextMove = null;
+				int currentMove = 1;
 
 				while(true){
 					Move move = agent.move(board, nextMove);
 					board = board.makeMove(move.fromy, move.fromx, move.toy, move.tox);
 					gui.update(board);
-					System.out.println(move);
 					move.fromy = 8-move.fromy;
 					move.toy = 8-move.toy;
 					char c = (char) (move.fromx+'a');
@@ -101,71 +105,53 @@ public class Main {
 					sb.append(c);
 					sb.append(move.toy);
 					String s = sb.toString();
-					System.out.println("about to write " + s);
-					writer.write(s);
+					writer.write(s+"\n");
 					writer.flush();
-					System.out.println("about to read");
 			
-					while(scan.hasNext()){
-						String line = scan.next();
-						System.out.println(line);
-						scan = new Scanner(System.in);
-						
-						try {
-							Thread.sleep(200);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						
-					}
-					
-					
-					/*
 					String line = br.readLine();
 					while(!line.startsWith("My move")){
-						System.out.println(line);
 						line = br.readLine();
-						is = p.getInputStream();
-						reader = new InputStreamReader(is);
-						br = new BufferedReader(reader);
-						p.
+						
 						try {
 							Thread.sleep(200);
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+						
 					}
-					*/
-/*
-					c = gnuchars[res-1];
-					int i = 1;
-					while(c != 's'){
-						c = gnuchars[res-i];
-								i++;
-					}
-
-					s = "";
-					i+=4;
-					while(gnuchars[res-i]!='W'){
-						s+=gnuchars[res-i];
-						i--;
-					}
-					*/
-					PGNMove pgnmove = null;
-					System.out.println(s);
+					writer.write("pgnsave game\n");
+					writer.flush();
+					
 					try {
-						pgnmove = new PGNMove(s);
-					} catch (MalformedMoveException e) {
+						Thread.sleep(200);
+					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					System.out.println(pgnmove);
+					
+					PGNMove pgnmove = null;
+					BufferedReader filereader = new BufferedReader(new FileReader("game"));
+
+					StringBuilder gamestring = new StringBuilder();
+					while(filereader.ready()){
+						gamestring.append(filereader.readLine());
+						gamestring.append("\n");
+					}
+					gamestring.append("1-0\n");
+					try {
+						List<PGNGame> list = PGNParser.parse(gamestring.toString());
+						pgnmove = list.get(0).getMove(currentMove);
+						currentMove += 2;
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					nextMove = DatabaseParser.parseMove(pgnmove);
-					System.out.println(nextMove);
 					board = board.makeMove(nextMove.fromy, nextMove.fromx, nextMove.toy, nextMove.tox);
 					gui.update(board);
+					File file = new File("game");
+					file.delete();
 					
 				}
 				
@@ -173,8 +159,52 @@ public class Main {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}else{
+		}else if(args.length > 1 && args[1].equals("playself")){
+			ChessGUI gui = new ChessGUI(board, false);
+			Agent white = new Agent(Piece.WHITE);
+			Agent black = new Agent(Piece.BLACK);
+			Move lastMove = null;
+			Board[] lastStates = new Board[8];
+			int i = 0;
+			boolean draw = false;
+			while(!draw){
+				Move move = white.move(board, lastMove);
+				board = board.makeMove(move.fromy, move.fromx, move.toy, move.tox);
+				lastStates[i] = board;
+				i++;
+				gui.update(board);
+				lastMove = move;
+				move = black.move(board, lastMove);
+				board = board.makeMove(move.fromy, move.fromx, move.toy, move.tox);
+				lastStates[i] = board;
+				i++;
+				gui.update(board);
+				lastMove = move;
+				if(i >= 8){
+					i = 0;
+					
+					for(int j = 4; j<8; j++){
+						if(lastStates[j].equals(lastStates[j-4])){
+							draw = true;
+						}
+					}
+					
+				}
 
+				if(draw){
+					System.out.println("draw");
+					ResultWriter.writeResult("draw");
+				}
+
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
+		}else{
 			ChessGUI gui = new ChessGUI(board, true);
 		}
 		

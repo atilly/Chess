@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.util.Scanner;
 
 import util.ResultWriter;
+
 import agent.Agent;
 
 public class CommandListener implements ActionListener {

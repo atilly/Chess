@@ -16,6 +16,20 @@ public class Board {
 		chessBoard = new Piece[SIZE][SIZE];
 	}
 
+	public boolean equals(Board other){
+
+		for(int i = 0; i<8; i++){
+			for(int j = 0;j<8;j++){
+				if(chessBoard[i][j].equals(other.chessBoard[i][j])){
+					
+				}else{
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
 	public void newgame() {
 
 		chessBoard[0][0] = new Rook(Piece.BLACK, 0, 0);
