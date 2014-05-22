@@ -73,24 +73,28 @@ public abstract class Piece {
 			color = "white";
 		}
 			
-		if(this instanceof  Pawn){
-			type = "pawn";
-		}else if(this instanceof Rook){
-			type = "rook";
-		}else if(this instanceof Knight){
-			type = "knight";
-		}else if(this instanceof Bishop){
-			type = "bishop";
-		}else if(this instanceof Queen){
-			type = "queen";
-		}else if(this instanceof King){
-			type = "king";
-		}
+		type = getType();
 
 		return color+type;
 	}
-
-	public abstract int getValue();
+	
+	public String getType(){
+		if(this instanceof  Pawn){
+			return "pawn";
+		}else if(this instanceof Rook){
+			return "rook";
+		}else if(this instanceof Knight){
+			return "knight";
+		}else if(this instanceof Bishop){
+			return "bishop";
+		}else if(this instanceof Queen){
+			return "queen";
+		}else if(this instanceof King){
+			return "king";
+		}else{
+			return "empty";
+		}
+	}
 	
 	public abstract ArrayList<Coordinate> getPath(int toy, int tox);
 	public abstract Piece clone();

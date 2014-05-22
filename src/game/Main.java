@@ -29,47 +29,9 @@ public class Main {
 
 	public static void main(String[] args) {
 		
+		boolean learn = false;
 		if(args.length > 0 && args[0].equals("learn")){
-			Random rand = new Random();
-			Pawn.value += rand.nextInt(Pawn.value/2)-(Pawn.value/4);
-			Bishop.value += rand.nextInt(Bishop.value/2)-(Bishop.value/4);
-			Knight.value += rand.nextInt(Knight.value/2)-(Knight.value/4);
-			Rook.value += rand.nextInt(Rook.value/2)-(Rook.value/4);
-			Queen.value += rand.nextInt(Queen.value/2)-(Queen.value/4);
-			King.value += rand.nextInt(King.value/2)-(King.value/4);
-		}else{
-			try {
-				BufferedReader reader = new BufferedReader(new FileReader("results.txt"));
-				int[] values = new int[6];
-				int count = 0;
-				while(reader.ready()){
-					String line = reader.readLine();
-
-					if(line.equals("win") || line.equals("draw")){
-						count++;
-						for(int i=0; i<6; i++){
-							line = reader.readLine();
-							String[] split = line.split("=");
-							int value = Integer.parseInt(split[1]);
-							values[i] += value;
-						}
-					}
-				}
-				for(int i=0; i<6; i++){
-					values[i] = values[i]/count;
-				}
-				Pawn.value = values[0];
-				Bishop.value = values[1];
-				Knight.value = values[2];
-				Rook.value = values[3];
-				Queen.value = values[4];
-				King.value = values[5];
-				reader.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
+			learn = true;
 		}
 		
 		Board board = new Board();
@@ -86,15 +48,20 @@ public class Main {
 				os = p.getOutputStream();
 				PrintWriter writer = new PrintWriter(os);
 				BufferedReader br = new BufferedReader(new InputStreamReader(is));
-				Agent agent = new Agent(Piece.WHITE);
-				ChessGUI gui = new ChessGUI(board, false);
+				Agent agent = new Agent(Piece.WHITE, learn);
+				ChessGUI gui = new ChessGUI(board, false, learn);
 				Move nextMove = null;
 				int currentMove = 1;
-
-				while(true){
+				String result = null;
+				while(result == null){
 					Move move = agent.move(board, nextMove);
 					board = board.makeMove(move.fromy, move.fromx, move.toy, move.tox);
 					gui.update(board);
+					
+					if(board.getLegalMoves(Piece.WHITE).size() == 0){
+						result = "win";
+					}
+					
 					move.fromy = 8-move.fromy;
 					move.toy = 8-move.toy;
 					char c = (char) (move.fromx+'a');
@@ -153,29 +120,41 @@ public class Main {
 					File file = new File("game");
 					file.delete();
 					
+					if(board.getLegalMoves(Piece.BLACK).size() == 0){
+						result = "win";
+					}
+					
 				}
+				System.out.println(result);
+				ResultWriter.writeResult(result, agent.values);
 				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}else if(args.length > 1 && args[1].equals("playself")){
-			ChessGUI gui = new ChessGUI(board, false);
-			Agent white = new Agent(Piece.WHITE);
-			Agent black = new Agent(Piece.BLACK);
+			ChessGUI gui = new ChessGUI(board, false, learn);
+			Agent white = new Agent(Piece.WHITE, learn);
+			Agent black = new Agent(Piece.BLACK, learn);
 			Move lastMove = null;
 			Board[] lastStates = new Board[8];
 			int i = 0;
-			boolean draw = false;
-			while(!draw){
+			String result = null;
+			while(result == null){
 				Move move = white.move(board, lastMove);
 				board = board.makeMove(move.fromy, move.fromx, move.toy, move.tox);
+				if(board.getLegalMoves(Piece.WHITE).size() == 0){
+					result = "win";
+				}
 				lastStates[i] = board;
 				i++;
 				gui.update(board);
 				lastMove = move;
 				move = black.move(board, lastMove);
 				board = board.makeMove(move.fromy, move.fromx, move.toy, move.tox);
+				if(board.getLegalMoves(Piece.BLACK).size() == 0){
+					result = "lose";
+				}
 				lastStates[i] = board;
 				i++;
 				gui.update(board);
@@ -185,15 +164,10 @@ public class Main {
 					
 					for(int j = 4; j<8; j++){
 						if(lastStates[j].equals(lastStates[j-4])){
-							draw = true;
+							result = "draw";
 						}
 					}
 					
-				}
-
-				if(draw){
-					System.out.println("draw");
-					ResultWriter.writeResult("draw");
 				}
 
 				try {
@@ -204,8 +178,19 @@ public class Main {
 				}
 				
 			}
+			System.out.println(result);
+			if(result.equals("win")){
+				ResultWriter.writeResult("win", white.values);
+				ResultWriter.writeResult("loss", black.values);
+			}else if(result.equals("loss")){
+				ResultWriter.writeResult("win", black.values);
+				ResultWriter.writeResult("loss", white.values);
+			}else{
+				ResultWriter.writeResult("draw", white.values);
+				ResultWriter.writeResult("draw", black.values);
+			}
 		}else{
-			ChessGUI gui = new ChessGUI(board, true);
+			ChessGUI gui = new ChessGUI(board, true, learn);
 		}
 		
 	}

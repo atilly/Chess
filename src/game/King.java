@@ -3,16 +3,10 @@ package game;
 import java.util.ArrayList;
 
 public class King extends Piece{
-
-	public static int value = 1000;
 	
 	public King(int color, int y, int x) {
 		super(color,y,x);
 		
-	}
-	
-	public int getValue(){
-		return value;
 	}
 	
 	public void move(int toy, int tox){

@@ -24,11 +24,11 @@ public class ChessGUI {
 	private HashMap<String, BufferedImage> images;
 	private JFrame frame;
 	
-	public ChessGUI(Board board, boolean listens){
+	public ChessGUI(Board board, boolean listens, boolean learn){
 
 		this.board = board;
 		buttons = new ChessButton[8][8];
-		Agent agent = new Agent(Piece.BLACK);
+		Agent agent = new Agent(Piece.BLACK, learn);
 		if(listens){
 			cmd = new CommandListener(board, this, agent, Piece.WHITE, Piece.BLACK);			
 		}

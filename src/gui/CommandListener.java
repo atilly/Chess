@@ -42,7 +42,7 @@ public class CommandListener implements ActionListener {
 				gui.update(board);
 				if(board.getLegalMoves(agentColor).size() == 0){
 					System.out.println("you won");
-					ResultWriter.writeResult("loss");
+					ResultWriter.writeResult("loss", agent.values);
 				}
 				/*
 				if(playerColor == Piece.WHITE){
@@ -57,7 +57,7 @@ public class CommandListener implements ActionListener {
 				//board.makemove(gnuchess)
 				if(board.getLegalMoves(playerColor).size() == 0){
 					System.out.println("you lost");
-					ResultWriter.writeResult("win");
+					ResultWriter.writeResult("win", agent.values);
 				}
 				gui.update(board);
 			}

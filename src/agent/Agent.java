@@ -1,15 +1,21 @@
 package agent;
 
+import game.Bishop;
 import game.Board;
 import game.Coordinate;
+import game.King;
+import game.Knight;
 import game.Move;
 import game.Pawn;
 import game.Piece;
+import game.Queen;
+import game.Rook;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,8 +37,9 @@ public class Agent {
 	private final static int MAX_DEPTH = 4;
 	private Move bestMove;
 	private ArrayList<ArrayList<Move>> allOpeningMoves;
+	public HashMap<String, Integer> values;
 	
-	public Agent(int color){
+	public Agent(int color, boolean learn){
 		bestMove = nullMove;
 		this.color = color;
 		if(color == Piece.BLACK){
@@ -40,8 +47,58 @@ public class Agent {
 		}
 		DatabaseParser parser = new DatabaseParser();
 		allOpeningMoves = parser.parseOpenings();
+		values = new HashMap<String, Integer>();
+
+		if(learn){
+			values.put("pawn",10);
+			values.put("bishop",30);
+			values.put("knight",30);
+			values.put("rook",50);
+			values.put("queen",90);
+			values.put("king",1000);
+
+			Random rand = new Random();
+			for(String s: values.keySet()){
+				int value = values.get(s);
+				value += rand.nextInt(value/2 - value/4);
+				values.put(s, value);
+			}
+			values.put("empty",0);
+		}else{
+			try {
+				BufferedReader reader = new BufferedReader(new FileReader("results.txt"));
+				int[] vals = new int[6];
+				int count = 0;
+				while(reader.ready()){
+					String line = reader.readLine();
+					if(line.equals("win") || line.equals("draw")){
+						count++;
+						for(int i=0; i<6; i++){
+							line = reader.readLine();
+							String[] split = line.split("=");
+							int value = Integer.parseInt(split[1]);
+							vals[i] += value;
+						}
+					}
+				}
+				for(int i=0; i<6; i++){
+					vals[i] = vals[i]/count;
+				}
+
+				values.put("pawn",vals[0]);
+				values.put("bishop",vals[1]);
+				values.put("knight",vals[2]);
+				values.put("rook",vals[3]);
+				values.put("queen",vals[4]);
+				values.put("king",vals[5]);
+				values.put("empty",0);
+				reader.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
-	
 	
 	public Move move(Board board, Move lastMove){
 		getOpening(lastMove);
@@ -146,7 +203,8 @@ public class Agent {
 		for (int i = 0; i < Board.SIZE; i++) {
 			for (int j = 0; j < Board.SIZE; j++) {
 				
-				value = chessBoard[i][j].getValue();
+				String type = chessBoard[i][j].getType();
+				value = values.get(type);
 				
 				if (chessBoard[i][j].color == color) {
 					sum += value;

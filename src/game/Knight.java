@@ -3,16 +3,10 @@ package game;
 import java.util.ArrayList;
 
 public class Knight extends Piece{
-
-	public static int value = 30;
 	
 	public Knight(int color, int y, int x) {
 		super(color,y,x);
 		
-	}
-
-	public int getValue(){
-		return value;
 	}
 	
 	@Override
