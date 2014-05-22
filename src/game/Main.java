@@ -42,7 +42,7 @@ public class Main {
 			OutputStream os;
 			
 			try {
-				ProcessBuilder pb = new ProcessBuilder("/h/d3/s/dt09at1/edan50/gnuchess-6.1.1/src/gnuchess");
+				ProcessBuilder pb = new ProcessBuilder(args[2]);
 				Process p = pb.start();
 				is = p.getInputStream();
 				os = p.getOutputStream();
@@ -58,7 +58,7 @@ public class Main {
 					board = board.makeMove(move.fromy, move.fromx, move.toy, move.tox);
 					gui.update(board);
 					
-					if(board.getLegalMoves(Piece.WHITE).size() == 0){
+					if(board.getLegalMoves(Piece.BLACK).size() == 0){
 						result = "win";
 					}
 					
@@ -120,8 +120,8 @@ public class Main {
 					File file = new File("game");
 					file.delete();
 					
-					if(board.getLegalMoves(Piece.BLACK).size() == 0){
-						result = "win";
+					if(board.getLegalMoves(Piece.WHITE).size() == 0){
+						result = "loss";
 					}
 					
 				}
@@ -143,7 +143,7 @@ public class Main {
 			while(result == null){
 				Move move = white.move(board, lastMove);
 				board = board.makeMove(move.fromy, move.fromx, move.toy, move.tox);
-				if(board.getLegalMoves(Piece.WHITE).size() == 0){
+				if(board.getLegalMoves(Piece.BLACK).size() == 0){
 					result = "win";
 				}
 				lastStates[i] = board;
@@ -152,7 +152,7 @@ public class Main {
 				lastMove = move;
 				move = black.move(board, lastMove);
 				board = board.makeMove(move.fromy, move.fromx, move.toy, move.tox);
-				if(board.getLegalMoves(Piece.BLACK).size() == 0){
+				if(board.getLegalMoves(Piece.WHITE).size() == 0){
 					result = "lose";
 				}
 				lastStates[i] = board;
